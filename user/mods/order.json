@@ -2,6 +2,7 @@
   "order": [
     "fika-server",
     "ServerValueModifier",
+    "tyfon-uifixes",
     "DewardianDev-AlgorithmicLevelProgression",
     "dirtbikercj-removetimegatefromquests-1.0.1",
     "DrakiaXYZ-LiveFleaPrices",
