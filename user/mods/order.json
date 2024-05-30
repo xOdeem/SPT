@@ -1,0 +1,17 @@
+{
+  "order": [
+    "fika-server",
+    "ServerValueModifier",
+    "DewardianDev-AlgorithmicLevelProgression",
+    "dirtbikercj-removetimegatefromquests-1.0.1",
+    "DrakiaXYZ-LiveFleaPrices",
+    "IhanaMies-LootValueBackend",
+    "MoreCheckmarksBackend",
+    "RaiRaiTheRaichu-AmmoStats-3.1.0",
+    "Skwizzy-NoDiscardLimit",
+    "Square-LiveBitcoinPrices-1.1.0",
+    "DanW-SPTQuestingBots",
+    "SWAG",
+    "zSolarint-SAIN-ServerMod"
+  ]
+}
