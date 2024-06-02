@@ -278,8 +278,6 @@ function ProgressionChanges(container) {
         (0, utils_1.setupMods)(mods);
         // lets disable this for now
         // addKeysToPockets(combinedNumList, items, tables.bots.types.assault.inventory);
-        usecInventory.items.SecuredContainer["5e99711486f7744bfc4af328"] = 1;
-        bearInventory.items.SecuredContainer["5e99711486f7744bfc4af328"] = 1;
         //Make everything level 1 in equipment
         (0, utils_1.reduceEquipmentChancesTo1)(usecInventory);
         (0, utils_1.reduceEquipmentChancesTo1)(bearInventory);
@@ -309,13 +307,25 @@ function ProgressionChanges(container) {
         }
         (0, utils_1.setWhitelists)(items, botConfig, tradersMasterList, mods);
         (0, utils_1.setWeightingAdjustments)(items, botConfig, tradersMasterList, mods);
-        (0, utils_1.buildInitialRandomization)(items, botConfig, tradersMasterList);
+        let lootingBotsDetected = false;
+        if (tables?.bots?.types?.bear?.generation?.items?.backpackLoot?.weights &&
+            new Set(Object.values(tables.bots.types.bear.generation.items.backpackLoot.weights)).size === 1) {
+            console.log("[AlgorithmicLevelProgression] Looting bots detected");
+            lootingBotsDetected = true;
+        }
+        (0, utils_1.buildInitialRandomization)(items, botConfig, tradersMasterList, lootingBotsDetected);
         (0, utils_1.deleteBlacklistedItemsFromInventory)(usecInventory);
         (0, utils_1.deleteBlacklistedItemsFromInventory)(bearInventory);
-        (0, utils_1.ensureAllAmmoInSecureContainer)(usecInventory);
-        (0, utils_1.ensureAllAmmoInSecureContainer)(bearInventory);
-        (0, utils_1.addBossSecureContainer)(usecInventory);
-        (0, utils_1.addBossSecureContainer)(bearInventory);
+        // add grizzly and surv to bot container
+        usecInventory.items.SecuredContainer["590c657e86f77412b013051d"] = 1;
+        usecInventory.items.SecuredContainer["5d02778e86f774203e7dedbe"] = 1;
+        bearInventory.items.SecuredContainer["590c657e86f77412b013051d"] = 1;
+        bearInventory.items.SecuredContainer["5d02778e86f774203e7dedbe"] = 1;
+        (0, utils_1.ensureAllAmmoInSecuredContainer)(usecInventory);
+        (0, utils_1.ensureAllAmmoInSecuredContainer)(bearInventory);
+        (0, utils_1.addBossSecuredContainer)(usecInventory);
+        (0, utils_1.addBossSecuredContainer)(bearInventory);
+        // addAllMedsToInventory(combinedNumWith5List, usecInventory, items);
         (0, utils_1.fixEmptyChancePlates)(botConfig);
     }
     else {
@@ -329,8 +339,8 @@ function ProgressionChanges(container) {
     Object.keys(advancedConfig_json_1.default.otherBotTypes).forEach((botType) => {
         (0, utils_1.mergeDeep)(botConfig.equipment[botType], advancedConfig_json_1.default.otherBotTypes[botType]);
     });
-    if (config_json_1.default.removeScavLootForLootingBots &&
-        botConfig?.equipment?.assault?.randomisation?.[0]?.generation) {
+    if (tables?.bots?.types?.assault?.generation?.items?.backpackLoot?.weights &&
+        new Set(Object.values(tables.bots.types.assault.generation.items.backpackLoot.weights)).size === 1) {
         const generation = botConfig.equipment.assault.randomisation[0]
             .generation;
         generation.backpackLoot = {

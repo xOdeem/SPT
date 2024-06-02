@@ -120,7 +120,10 @@ class QuestingBots {
         if (!config_json_1.default.enabled) {
             return;
         }
-        this.performFileIntegrityCheck();
+        if (!this.doesFileIntegrityCheckPass()) {
+            config_json_1.default.enabled = false;
+            return;
+        }
         if (config_json_1.default.debug.always_have_airdrops) {
             this.commonUtils.logInfo("Forcing airdrops to occur at the beginning of every raid...");
             this.iAirdropConfig.airdropChancePercent.bigmap = 100;
@@ -191,8 +194,9 @@ class QuestingBots {
             this.commonUtils.logInfo("Removing SPT Rogue spawn delay...");
             this.iLocationConfig.rogueLighthouseSpawnTimeSettings.waitTimeSeconds = -1;
         }
-        if (config_json_1.default.bot_spawns.advanced_eft_bot_count_management) {
+        if (config_json_1.default.bot_spawns.advanced_eft_bot_count_management.enabled) {
             this.commonUtils.logInfo("Enabling advanced_eft_bot_count_management will instruct EFT to ignore this mod's PMC's and PScavs when spawning more bots.");
+            this.useEFTBotCaps();
         }
         if (config_json_1.default.bot_spawns.bot_cap_adjustments.enabled) {
             this.increaseBotCaps();
@@ -343,7 +347,7 @@ class QuestingBots {
         }
         return bots;
     }
-    performFileIntegrityCheck() {
+    doesFileIntegrityCheckPass() {
         const path = `${__dirname}/..`;
         if (this.vfs.exists(`${path}/quests/`)) {
             this.commonUtils.logWarning("Found obsolete quests folder 'user\\mods\\DanW-SPTQuestingBots\\quests'. Only quest files in 'BepInEx\\plugins\\DanW-SPTQuestingBots\\quests' will be used.");
@@ -351,6 +355,82 @@ class QuestingBots {
         if (this.vfs.exists(`${path}/log/`)) {
             this.commonUtils.logWarning("Found obsolete log folder 'user\\mods\\DanW-SPTQuestingBots\\log'. Logs are now saved in 'BepInEx\\plugins\\DanW-SPTQuestingBots\\log'.");
         }
+        if (this.vfs.exists(`${path}/../../../BepInEx/plugins/SPTQuestingBots.dll`)) {
+            this.commonUtils.logError("Please remove BepInEx/plugins/SPTQuestingBots.dll from the previous version of this mod and restart the server, or it will NOT work correctly.");
+            return false;
+        }
+        return true;
+    }
+    useEFTBotCaps() {
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.use_EFT_bot_caps) {
+            return;
+        }
+        this.commonUtils.logInfo(`Original bot counts for Factory Day - SPT: ${this.iBotConfig.maxBotCap.factory4_day}, EFT: ${this.databaseTables.locations.factory4_day.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Factory Night - SPT: ${this.iBotConfig.maxBotCap.factory4_night}, EFT: ${this.databaseTables.locations.factory4_night.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Customs - SPT: ${this.iBotConfig.maxBotCap.bigmap}, EFT: ${this.databaseTables.locations.bigmap.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Woods - SPT: ${this.iBotConfig.maxBotCap.woods}, EFT: ${this.databaseTables.locations.woods.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Shoreline - SPT: ${this.iBotConfig.maxBotCap.shoreline}, EFT: ${this.databaseTables.locations.shoreline.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Lighthouse - SPT: ${this.iBotConfig.maxBotCap.lighthouse}, EFT: ${this.databaseTables.locations.lighthouse.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Reserve - SPT: ${this.iBotConfig.maxBotCap.rezervbase}, EFT: ${this.databaseTables.locations.rezervbase.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Interchange - SPT: ${this.iBotConfig.maxBotCap.interchange}, EFT: ${this.databaseTables.locations.interchange.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Labs - SPT: ${this.iBotConfig.maxBotCap.laboratory}, EFT: ${this.databaseTables.locations.laboratory.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Streets - SPT: ${this.iBotConfig.maxBotCap.tarkovstreets}, EFT: ${this.databaseTables.locations.tarkovstreets.base.BotMax}`);
+        this.commonUtils.logInfo(`Original bot counts for Ground Zero - SPT: ${this.iBotConfig.maxBotCap.sandbox}, EFT: ${this.databaseTables.locations.sandbox.base.BotMax}`);
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.factory4_day > this.databaseTables.locations.factory4_day.base.BotMax)) {
+            this.iBotConfig.maxBotCap.factory4_day = this.databaseTables.locations.factory4_day.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.factory4_night > this.databaseTables.locations.factory4_night.base.BotMax)) {
+            this.iBotConfig.maxBotCap.factory4_night = this.databaseTables.locations.factory4_night.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.bigmap > this.databaseTables.locations.bigmap.base.BotMax)) {
+            this.iBotConfig.maxBotCap.bigmap = this.databaseTables.locations.bigmap.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.woods > this.databaseTables.locations.woods.base.BotMax)) {
+            this.iBotConfig.maxBotCap.woods = this.databaseTables.locations.woods.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.shoreline > this.databaseTables.locations.shoreline.base.BotMax)) {
+            this.iBotConfig.maxBotCap.shoreline = this.databaseTables.locations.shoreline.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.lighthouse > this.databaseTables.locations.lighthouse.base.BotMax)) {
+            this.iBotConfig.maxBotCap.lighthouse = this.databaseTables.locations.lighthouse.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.rezervbase > this.databaseTables.locations.rezervbase.base.BotMax)) {
+            this.iBotConfig.maxBotCap.rezervbase = this.databaseTables.locations.rezervbase.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.interchange > this.databaseTables.locations.interchange.base.BotMax)) {
+            this.iBotConfig.maxBotCap.interchange = this.databaseTables.locations.interchange.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.laboratory > this.databaseTables.locations.laboratory.base.BotMax)) {
+            this.iBotConfig.maxBotCap.laboratory = this.databaseTables.locations.laboratory.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.tarkovstreets > this.databaseTables.locations.tarkovstreets.base.BotMax)) {
+            this.iBotConfig.maxBotCap.tarkovstreets = this.databaseTables.locations.tarkovstreets.base.BotMax;
+        }
+        if (!config_json_1.default.bot_spawns.advanced_eft_bot_count_management.only_decrease_bot_caps || (this.iBotConfig.maxBotCap.sandbox > this.databaseTables.locations.sandbox.base.BotMax)) {
+            this.iBotConfig.maxBotCap.sandbox = this.databaseTables.locations.sandbox.base.BotMax;
+        }
+        this.iBotConfig.maxBotCap.factory4_day += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.factory4_day;
+        this.iBotConfig.maxBotCap.factory4_night += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.factory4_night;
+        this.iBotConfig.maxBotCap.bigmap += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.bigmap;
+        this.iBotConfig.maxBotCap.woods += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.woods;
+        this.iBotConfig.maxBotCap.shoreline += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.shoreline;
+        this.iBotConfig.maxBotCap.lighthouse += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.lighthouse;
+        this.iBotConfig.maxBotCap.rezervbase += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.rezervbase;
+        this.iBotConfig.maxBotCap.interchange += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.interchange;
+        this.iBotConfig.maxBotCap.laboratory += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.laboratory;
+        this.iBotConfig.maxBotCap.tarkovstreets += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.tarkovstreets;
+        this.iBotConfig.maxBotCap.sandbox += config_json_1.default.bot_spawns.advanced_eft_bot_count_management.bot_cap_adjustments.sandbox;
+        this.commonUtils.logInfo(`Updated bot counts for Factory Day - SPT: ${this.iBotConfig.maxBotCap.factory4_day}, EFT: ${this.databaseTables.locations.factory4_day.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Factory Night - SPT: ${this.iBotConfig.maxBotCap.factory4_night}, EFT: ${this.databaseTables.locations.factory4_night.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Customs - SPT: ${this.iBotConfig.maxBotCap.bigmap}, EFT: ${this.databaseTables.locations.bigmap.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Woods - SPT: ${this.iBotConfig.maxBotCap.woods}, EFT: ${this.databaseTables.locations.woods.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Shoreline - SPT: ${this.iBotConfig.maxBotCap.shoreline}, EFT: ${this.databaseTables.locations.shoreline.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Lighthouse - SPT: ${this.iBotConfig.maxBotCap.lighthouse}, EFT: ${this.databaseTables.locations.lighthouse.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Reserve - SPT: ${this.iBotConfig.maxBotCap.rezervbase}, EFT: ${this.databaseTables.locations.rezervbase.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Interchange - SPT: ${this.iBotConfig.maxBotCap.interchange}, EFT: ${this.databaseTables.locations.interchange.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Labs - SPT: ${this.iBotConfig.maxBotCap.laboratory}, EFT: ${this.databaseTables.locations.laboratory.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Streets - SPT: ${this.iBotConfig.maxBotCap.tarkovstreets}, EFT: ${this.databaseTables.locations.tarkovstreets.base.BotMax}`);
+        this.commonUtils.logInfo(`Updated bot counts for Ground Zero - SPT: ${this.iBotConfig.maxBotCap.sandbox}, EFT: ${this.databaseTables.locations.sandbox.base.BotMax}`);
     }
 }
 module.exports = { mod: new QuestingBots() };
