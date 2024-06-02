@@ -311,7 +311,7 @@
     "SaveGearAfterDeath": false,
     "RaidEvents": {
       "DisableEvents": false,
-      "SnowEvent": false,
+      "SnowEvent": true,
       "KillaFactoryChance": 100,
       "GoonsFactoryChance": 100,
       "GoonsFactory": false,
@@ -711,7 +711,7 @@
       "RogueMin": 80,
       "RaiderMin": 80
     },
-    "EnableBots": true
+    "EnableBots": false
   },
   "PMC": {
     "NameOverride": false,
