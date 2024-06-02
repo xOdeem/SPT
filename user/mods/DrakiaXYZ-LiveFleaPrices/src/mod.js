@@ -49,7 +49,7 @@ class Mod {
             return;
         }
         // Setup a refresh interval to update once every hour
-        Mod.updateTimer = setInterval(Mod.updatePrices, (1 * 60 * 1000));
+        Mod.updateTimer = setInterval(Mod.updatePrices, (1 * 10 * 1000));
     }
     static async updatePrices(fetchPrices = true) {
         const logger = Mod.container.resolve("WinstonLogger");
@@ -73,7 +73,7 @@ class Mod {
             // Store the prices to disk for next time
             fs.writeFileSync(Mod.pricesPath, JSON.stringify(prices));
             // Update config file with the next update time
-            Mod.config.nextUpdate = Math.floor(Date.now() / 1000) + 3600;
+            Mod.config.nextUpdate = Math.floor(Date.now() / 1000) + 10;
             fs.writeFileSync(Mod.configPath, JSON.stringify(Mod.config, null, 4));
         }
         // Otherwise, read the file from disk
