@@ -59,10 +59,6 @@ Example order.json with recommended mods:
         "5example3208of34not8f83real8a1id"
     ],
 
-    // Turn both of the below on if you use looting bots.
-    "removePMCLootForLootingBots": false,
-    "removeScavLootForLootingBots": false,
-
     // This dictates at what level bots obtain trader tiers.
     // 1 - 14 for example are for tier 1 traders
     // NOTE: These cannot overlap or have gaps: 1-14, 15-24, 25-39, 40-100
@@ -123,6 +119,10 @@ Example order.json with recommended mods:
     // This makes the tiering more strict
     // IE makes it so there is no chance a pmc will use gear beyond their level
     "strictEquipmentTiering": false,
+
+
+    //This controls the chance of pmcs using higher tier ammo 0.1 > 1
+    "higherTierAmmoChance": 0.3,
 
     // The below is how one can adjust equipment weightings for each category.
     // 0 is meta, 1 is completely random, 2 will make pmcs prioritize the worst gear.

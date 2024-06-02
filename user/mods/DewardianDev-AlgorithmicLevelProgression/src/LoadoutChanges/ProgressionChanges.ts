@@ -10,7 +10,8 @@ import advancedConfig from "../../config/advancedConfig.json";
 import config from "../../config/config.json";
 import { IBotConfig } from "../../types/models/spt/config/IBotConfig.d";
 import {
-  addBossSecureContainer,
+  addAllMedsToInventory,
+  addBossSecuredContainer,
   addToModsObject,
   AmmoParent,
   armorPlateParent,
@@ -24,7 +25,7 @@ import {
   cloneDeep,
   combineWhitelist,
   deleteBlacklistedItemsFromInventory,
-  ensureAllAmmoInSecureContainer,
+  ensureAllAmmoInSecuredContainer,
   fixEmptyChancePlates,
   getEquipmentType,
   magParent,
@@ -384,6 +385,7 @@ export default function ProgressionChanges(
       ...combinedNumList,
       ...tradersMasterList[5],
     ]);
+
     buildWeaponSightWhitelist(items, botConfig, tradersMasterList);
     buildOutModsObject(combinedNumWith5List, items, usecInventory, botConfig);
     bearInventory.mods = cloneDeep(usecInventory.mods);
@@ -392,9 +394,6 @@ export default function ProgressionChanges(
 
     // lets disable this for now
     // addKeysToPockets(combinedNumList, items, tables.bots.types.assault.inventory);
-
-    usecInventory.items.SecuredContainer["5e99711486f7744bfc4af328"] = 1;
-    bearInventory.items.SecuredContainer["5e99711486f7744bfc4af328"] = 1;
 
     //Make everything level 1 in equipment
     reduceEquipmentChancesTo1(usecInventory);
@@ -441,16 +440,43 @@ export default function ProgressionChanges(
 
     setWhitelists(items, botConfig, tradersMasterList, mods);
     setWeightingAdjustments(items, botConfig, tradersMasterList, mods);
-    buildInitialRandomization(items, botConfig, tradersMasterList);
+
+    let lootingBotsDetected = false;
+    if (
+      tables?.bots?.types?.bear?.generation?.items?.backpackLoot?.weights &&
+      new Set(
+        Object.values(
+          tables.bots.types.bear.generation.items.backpackLoot.weights
+        )
+      ).size === 1
+    ) {
+      console.log("[AlgorithmicLevelProgression] Looting bots detected");
+      lootingBotsDetected = true;
+    }
+
+    buildInitialRandomization(
+      items,
+      botConfig,
+      tradersMasterList,
+      lootingBotsDetected
+    );
 
     deleteBlacklistedItemsFromInventory(usecInventory);
     deleteBlacklistedItemsFromInventory(bearInventory);
 
-    ensureAllAmmoInSecureContainer(usecInventory);
-    ensureAllAmmoInSecureContainer(bearInventory);
+    // add grizzly and surv to bot container
+    usecInventory.items.SecuredContainer["590c657e86f77412b013051d"] = 1;
+    usecInventory.items.SecuredContainer["5d02778e86f774203e7dedbe"] = 1;
+    bearInventory.items.SecuredContainer["590c657e86f77412b013051d"] = 1;
+    bearInventory.items.SecuredContainer["5d02778e86f774203e7dedbe"] = 1;
 
-    addBossSecureContainer(usecInventory);
-    addBossSecureContainer(bearInventory);
+    ensureAllAmmoInSecuredContainer(usecInventory);
+    ensureAllAmmoInSecuredContainer(bearInventory);
+
+    addBossSecuredContainer(usecInventory);
+    addBossSecuredContainer(bearInventory);
+
+    // addAllMedsToInventory(combinedNumWith5List, usecInventory, items);
 
     fixEmptyChancePlates(botConfig);
   } else {
@@ -469,9 +495,14 @@ export default function ProgressionChanges(
       advancedConfig.otherBotTypes[botType]
     );
   });
+
   if (
-    config.removeScavLootForLootingBots &&
-    (botConfig?.equipment?.assault?.randomisation?.[0] as any)?.generation
+    tables?.bots?.types?.assault?.generation?.items?.backpackLoot?.weights &&
+    new Set(
+      Object.values(
+        tables.bots.types.assault.generation.items.backpackLoot.weights
+      )
+    ).size === 1
   ) {
     const generation = (botConfig.equipment.assault.randomisation[0] as any)
       .generation;
