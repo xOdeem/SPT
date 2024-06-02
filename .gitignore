@@ -31,6 +31,9 @@ BepInEx/*
 # BepInEx Plugins 
 !BepInEx/plugins
 
+# Custom BepInNex mod exclusions
+BepInEx/plugins/DanW-SPTQuestingBots/log
+
 
 #Include EscapeFromTarkov_Data/Managed/Aki.Common.dll & Aki.Reflection.dll
 !EscapeFromTarkov_Data/
