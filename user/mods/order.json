@@ -1,6 +1,7 @@
 {
   "order": [
     "fika-server",
+    "aaa_Isaac-LootUpdate",
     "ServerValueModifier",
     "tyfon-uifixes",
     "DewardianDev-AlgorithmicLevelProgression",
@@ -13,6 +14,7 @@
     "Square-LiveBitcoinPrices-1.1.0",
     "DanW-SPTQuestingBots",
     "SWAG",
-    "zSolarint-SAIN-ServerMod"
+    "zSolarint-SAIN-ServerMod",
+    "Isaac-InertiaUpdate"
   ]
 }
