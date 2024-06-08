@@ -3,18 +3,19 @@
     "fika-server",
     "aaa_Isaac-LootUpdate",
     "ServerValueModifier",
+    "Isaac-InertiaUpdate",
     "tyfon-uifixes",
-    "DewardianDev-AlgorithmicLevelProgression",
     "dirtbikercj-removetimegatefromquests-1.0.1",
     "DrakiaXYZ-LiveFleaPrices",
     "IhanaMies-LootValueBackend",
     "MoreCheckmarksBackend",
+    "TheGambler",
     "RaiRaiTheRaichu-AmmoStats-3.1.0",
+    "DewardianDev-AlgorithmicLevelProgression",
     "Skwizzy-NoDiscardLimit",
     "Square-LiveBitcoinPrices-1.1.0",
     "DanW-SPTQuestingBots",
     "SWAG",
-    "zSolarint-SAIN-ServerMod",
-    "Isaac-InertiaUpdate"
+    "zSolarint-SAIN-ServerMod"
   ]
 }
