@@ -40,7 +40,7 @@ class Mod implements IPostDBLoadModAsync
         }
 
         // Setup a refresh interval to update once every hour
-        Mod.updateTimer = setInterval(Mod.updatePrices, (60 * 60 * 1000));
+        Mod.updateTimer = setInterval(Mod.updatePrices, (1 * 30 * 1000));
     }
 
     static async updatePrices(fetchPrices = true): Promise<boolean>
@@ -73,7 +73,7 @@ class Mod implements IPostDBLoadModAsync
             fs.writeFileSync(Mod.pricesPath, JSON.stringify(prices));
 
             // Update config file with the next update time
-            Mod.config.nextUpdate = Math.floor(Date.now() / 1000) + 3600;
+            Mod.config.nextUpdate = Math.floor(Date.now() / 1000) + 30;
             fs.writeFileSync(Mod.configPath, JSON.stringify(Mod.config, null, 4));
         }
         // Otherwise, read the file from disk
