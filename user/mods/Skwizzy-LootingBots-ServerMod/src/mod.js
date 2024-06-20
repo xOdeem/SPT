@@ -10,6 +10,7 @@ class DisableDiscardLimits {
         const databaseServer = container.resolve("DatabaseServer");
         const configServer = container.resolve("ConfigServer");
         const pmcConfig = configServer.getConfig(ConfigTypes_1.ConfigTypes.PMC);
+        const botConfig = configServer.getConfig(ConfigTypes_1.ConfigTypes.BOT);
         const { logInfo } = useLogger(container);
         const tables = databaseServer.getTables();
         /**
@@ -22,15 +23,22 @@ class DisableDiscardLimits {
                 const backpackWeights = tables.bots.types[type].generation.items.backpackLoot.weights;
                 const vestWeights = tables.bots.types[type].generation.items.vestLoot.weights;
                 const pocketWeights = tables.bots.types[type].generation.items.pocketLoot.weights;
-                Object.keys(backpackWeights).forEach(weight => backpackWeights[weight] = 0);
-                Object.keys(vestWeights).forEach(weight => vestWeights[weight] = 0);
-                Object.keys(pocketWeights).forEach(weight => pocketWeights[weight] = 0);
+                clearWeights(backpackWeights);
+                clearWeights(vestWeights);
+                clearWeights(pocketWeights);
             });
         };
         if (!config_json_1.default.pmcSpawnWithLoot) {
             emptyInventory(["usec", "bear"]);
             // Do not allow weapons to spawn in PMC bags
             pmcConfig.looseWeaponInBackpackLootMinMax.max = 0;
+            // Clear weights in pmc randomisation
+            botConfig.equipment?.pmc?.randomisation?.forEach(details => {
+                const generation = details?.generation;
+                clearWeights(generation?.backpackLoot?.weights);
+                clearWeights(generation?.pocketLoot?.weights);
+                clearWeights(generation?.vestLoot?.weights);
+            });
         }
         if (!config_json_1.default.scavSpawnWithLoot) {
             emptyInventory(["assault"]);
@@ -53,11 +61,14 @@ class DisableDiscardLimits {
         logInfo("Global config DiscardLimitsEnabled set to false");
     }
 }
+function clearWeights(weights = {}) {
+    Object.keys(weights).forEach(weight => weights[weight] = 0);
+}
 function useLogger(container) {
     const logger = container.resolve("WinstonLogger");
     return {
         logInfo: (message) => {
-            logger.info(`[NoDiscardLimit] ${message}`);
+            logger.info(`[LootingBots-ServerMod] ${message}`);
         },
     };
 }

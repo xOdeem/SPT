@@ -311,7 +311,7 @@
     "SaveGearAfterDeath": false,
     "RaidEvents": {
       "DisableEvents": false,
-      "SnowEvent": true,
+      "SnowEvent": false,
       "KillaFactoryChance": 100,
       "GoonsFactoryChance": 100,
       "GoonsFactory": false,
