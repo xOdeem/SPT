@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_json_1 = __importDefault(require("../config/config.json"));
+const eftQuestSettings_json_1 = __importDefault(require("../config/eftQuestSettings.json"));
+const zoneAndItemQuestPositions_json_1 = __importDefault(require("../config/zoneAndItemQuestPositions.json"));
 const CommonUtils_1 = require("./CommonUtils");
 const ConfigTypes_1 = require("C:/snapshot/project/obj/models/enums/ConfigTypes");
 const modName = "SPTQuestingBots";
@@ -82,6 +84,20 @@ class QuestingBots {
                     return JSON.stringify({ templates: this.questHelper.getQuestsFromDb() });
                 }
             }], "GetAllQuestTemplates");
+        // Get override settings for EFT quests
+        staticRouterModService.registerStaticRouter(`GetEFTQuestSettings${modName}`, [{
+                url: "/QuestingBots/GetEFTQuestSettings",
+                action: () => {
+                    return JSON.stringify({ settings: eftQuestSettings_json_1.default });
+                }
+            }], "GetEFTQuestSettings");
+        // Get override settings for quest zones and items
+        staticRouterModService.registerStaticRouter(`GetZoneAndItemQuestPositions${modName}`, [{
+                url: "/QuestingBots/GetZoneAndItemQuestPositions",
+                action: () => {
+                    return JSON.stringify({ zoneAndItemPositions: zoneAndItemQuestPositions_json_1.default });
+                }
+            }], "GetZoneAndItemQuestPositions");
         // Override bot generation to include PScav conversion chance
         dynamicRouterModService.registerDynamicRouter(`DynamicGenerateBot${modName}`, [{
                 url: "/QuestingBots/GenerateBot",
@@ -197,6 +213,7 @@ class QuestingBots {
         if (config_json_1.default.bot_spawns.advanced_eft_bot_count_management.enabled) {
             this.commonUtils.logInfo("Enabling advanced_eft_bot_count_management will instruct EFT to ignore this mod's PMC's and PScavs when spawning more bots.");
             this.useEFTBotCaps();
+            this.modifyNonWaveBotSpawnSettings();
         }
         if (config_json_1.default.bot_spawns.bot_cap_adjustments.enabled) {
             this.increaseBotCaps();
@@ -431,6 +448,41 @@ class QuestingBots {
         this.commonUtils.logInfo(`Updated bot counts for Labs - SPT: ${this.iBotConfig.maxBotCap.laboratory}, EFT: ${this.databaseTables.locations.laboratory.base.BotMax}`);
         this.commonUtils.logInfo(`Updated bot counts for Streets - SPT: ${this.iBotConfig.maxBotCap.tarkovstreets}, EFT: ${this.databaseTables.locations.tarkovstreets.base.BotMax}`);
         this.commonUtils.logInfo(`Updated bot counts for Ground Zero - SPT: ${this.iBotConfig.maxBotCap.sandbox}, EFT: ${this.databaseTables.locations.sandbox.base.BotMax}`);
+    }
+    modifyNonWaveBotSpawnSettings() {
+        /*this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Factory Day : ${this.databaseTables.locations.factory4_day.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Factory Night : ${this.databaseTables.locations.factory4_night.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Customs : ${this.databaseTables.locations.bigmap.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Woods : ${this.databaseTables.locations.woods.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Shoreline : ${this.databaseTables.locations.shoreline.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Lighthouse : ${this.databaseTables.locations.lighthouse.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Reserve : ${this.databaseTables.locations.rezervbase.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Interchange : ${this.databaseTables.locations.interchange.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Labs : ${this.databaseTables.locations.laboratory.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Streets : ${this.databaseTables.locations.tarkovstreets.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Original BotSpawnPeriodCheck for Ground Zero : ${this.databaseTables.locations.sandbox.base.BotSpawnPeriodCheck}`);*/
+        this.databaseTables.locations.factory4_day.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.factory4_night.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.bigmap.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.woods.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.shoreline.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.lighthouse.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.rezervbase.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.interchange.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.laboratory.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.tarkovstreets.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.databaseTables.locations.sandbox.base.BotSpawnPeriodCheck *= config_json_1.default.bot_spawns.non_wave_bot_spawn_period_factor;
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Factory Day : ${this.databaseTables.locations.factory4_day.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Factory Night : ${this.databaseTables.locations.factory4_night.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Customs : ${this.databaseTables.locations.bigmap.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Woods : ${this.databaseTables.locations.woods.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Shoreline : ${this.databaseTables.locations.shoreline.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Lighthouse : ${this.databaseTables.locations.lighthouse.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Reserve : ${this.databaseTables.locations.rezervbase.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Interchange : ${this.databaseTables.locations.interchange.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Labs : ${this.databaseTables.locations.laboratory.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Streets : ${this.databaseTables.locations.tarkovstreets.base.BotSpawnPeriodCheck}`);
+        this.commonUtils.logInfo(`Updated BotSpawnPeriodCheck for Ground Zero : ${this.databaseTables.locations.sandbox.base.BotSpawnPeriodCheck}`);
     }
 }
 module.exports = { mod: new QuestingBots() };
